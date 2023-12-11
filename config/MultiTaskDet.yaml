@@ -1,0 +1,16 @@
+img_params:
+  batch_size: 1
+  img_h: 800
+  img_w: 800
+model_params:
+  model_path: "/hostdata/projects/parking_perception/modules/MultiTaskDet/model/yolop-800-800-all-5th.trt"
+  confidence_threshold: 0.25
+  nms_threshold: 0.45
+  tensorNum: 4
+  tensorNames: ["images", "det_out", "drive_area_seg", "lane_line_seg"]
+  tensorDim0: [1, 1, 1, 1]
+  tensorDim1: [3, 39375, 800, 800]
+  tensorDim2: [800, 14, 800, 800]
+  tensorDim3: [800, 0, 0, 0]
+device_params:
+  device_id: 0

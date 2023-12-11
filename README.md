@@ -1,4 +1,4 @@
-# Use of MultiTaskDet
+# MultiTaskDet
 
 ## 1 Requirement
 This codebase has been developed with cuda-11.1, TensorRT-8.4.1.5, OpenCV-3 and YAML ...
