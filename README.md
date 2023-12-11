@@ -8,10 +8,10 @@ This codebase has been developed with cuda-11.1, TensorRT-8.4.1.5, OpenCV-3 and 
 `docker run --gpus all -it -v /mnt/Data/Dataset:/hostdata/Dataset -v /mnt/work/projects:/hostdata/projects -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -e GDK_SCALE -e GDK_DPI_SCALE --net=host --privileged=true --name=perception_20231204 ubuntu18.04_cu11.1_trt8.4:20231204 /bin/bash`
 
 ### 2.2 Install modules *MultiTaskDet*
-`
+```
 cd MultiTaskDet
 bash build.sh
-`
+```
 
 ## 3 Test
 ### 3.1 Run test
