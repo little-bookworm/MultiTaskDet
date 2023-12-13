@@ -2,7 +2,7 @@
  * @Author: zjj
  * @Date: 2023-12-04 10:55:58
  * @LastEditors: zjj
- * @LastEditTime: 2023-12-07 17:10:48
+ * @LastEditTime: 2023-12-13 13:37:38
  * @FilePath: /MultiTaskDet/include/inference.h
  * @Description:
  *
@@ -59,17 +59,18 @@ struct InferResults
 class AVM_MultiTaskDet
 {
 public:
-  AVM_MultiTaskDet(std::string infer_config_path);
+  AVM_MultiTaskDet(std::string config_path);
   int init();
   int inference(const cv::Mat& input_img);
   InferResults* get_results();
 
 private:
-  int load_config(std::string& config_path);
+  int load_config();
   void preprocess(uint8_t* img_device, float* buffer, int batch, int width, int height, cudaStream_t stream);
   void decode();
 
 private:
+  std::string config_path_;
   Params infer_params_;  //推理输入参数
   // cuda and trt
   cudaStream_t stream_;                                                   // stream

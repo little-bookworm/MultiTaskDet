@@ -4,18 +4,19 @@ namespace ParkingPerception
 {
 namespace MultiTaskDet
 {
-AVM_MultiTaskDet::AVM_MultiTaskDet(std::string infer_config_path)
+AVM_MultiTaskDet::AVM_MultiTaskDet(std::string config_path):config_path_(config_path)
 {
-  if (0 != load_config(infer_config_path))
-  {
-    std::cout << "[MultiTaskDet]->[constructor] Failed to load config file." << std::endl;
-    return;
-  }
-  std::cout << "[MultiTaskDet]->[constructor] Loading config file success." << std::endl;
 }
 
 int AVM_MultiTaskDet::init()
 {
+  //读取配置参数
+  if (0 != load_config())
+  {
+    std::cout << "[MultiTaskDet]->[init] Failed to load config file." << std::endl;
+    return -1;
+  }
+
   // 设置device
   CHECK_CUDA(cudaSetDevice(infer_params_.device_id));
   // 设置stream;
@@ -206,17 +207,17 @@ InferResults* AVM_MultiTaskDet::get_results()
   return &infer_results_;
 }
 
-int AVM_MultiTaskDet::load_config(std::string& config_path)
+int AVM_MultiTaskDet::load_config()
 {
   //导入yaml文件
   YAML::Node infer_config;
   try
   {
-    infer_config = YAML::LoadFile(config_path);
+    infer_config = YAML::LoadFile(config_path_);
   }
   catch (const std::exception& e)
   {
-    std::cout << "[MultiTaskDet]->[load_config] No config file: " << config_path << std::endl;
+    std::cout << "[MultiTaskDet]->[load_config] No config file: " << config_path_ << std::endl;
     return -1;
   }
 

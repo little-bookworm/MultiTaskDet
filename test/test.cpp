@@ -2,7 +2,7 @@
  * @Author: zjj
  * @Date: 2023-12-04 16:02:47
  * @LastEditors: zjj
- * @LastEditTime: 2023-12-08 14:03:47
+ * @LastEditTime: 2023-12-13 13:39:10
  * @FilePath: /MultiTaskDet/test/test.cpp
  * @Description:
  *
@@ -88,12 +88,14 @@ int main()
   if (0 != det->init())
   {
     std::cout << "Init failed" << std::endl;
+    return 0;
   }
 
   //模型推理
   if (0 != det->inference(img_input))
   {
     std::cout << "Infer failed" << std::endl;
+    return 0;
   }
 
   //检测结果
