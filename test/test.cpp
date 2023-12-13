@@ -2,7 +2,7 @@
  * @Author: zjj
  * @Date: 2023-12-04 16:02:47
  * @LastEditors: zjj
- * @LastEditTime: 2023-12-13 13:39:10
+ * @LastEditTime: 2023-12-13 14:31:41
  * @FilePath: /MultiTaskDet/test/test.cpp
  * @Description:
  *
@@ -82,7 +82,7 @@ int main()
 
   //实例化推理模型
   std::string config_file = "/hostdata/projects/parking_perception/modules/MultiTaskDet/config/MultiTaskDet.yaml";
-  AVM_MultiTaskDet* det = CreateDetection(config_file);
+  std::shared_ptr<AVM_MultiTaskDet> det = CreateDetection(config_file);
 
   //模型初始化
   if (0 != det->init())
