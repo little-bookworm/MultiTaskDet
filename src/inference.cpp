@@ -8,10 +8,10 @@ AVM_MultiTaskDet::AVM_MultiTaskDet(std::string infer_config_path)
 {
   if (0 != load_config(infer_config_path))
   {
-    std::cout << "[avm_mlt_det]->[constructor] Failed to load config file." << std::endl;
+    std::cout << "[MultiTaskDet]->[constructor] Failed to load config file." << std::endl;
     return;
   }
-  std::cout << "[avm_mlt_det]->[constructor] Loading config file success." << std::endl;
+  std::cout << "[MultiTaskDet]->[constructor] Loading config file success." << std::endl;
 }
 
 int AVM_MultiTaskDet::init()
@@ -35,14 +35,15 @@ int AVM_MultiTaskDet::init()
   }
   else
   {
-    std::cout << "[avm_mlt_det]->[init] Failed to Load engine file !" << std::endl;
+    std::cout << "[MultiTaskDet]->[init] Failed to Load engine file: " << infer_params_.model_file << std::endl;
     return -1;
   }
   //构建推理runtime
   auto runtime = std::unique_ptr<nvinfer1::IRuntime, NvInferDeleter>(nvinfer1::createInferRuntime(gLogger));
   if (!runtime)
   {
-    std::cout << "[avm_mlt_det]->[init] Failed to create runtime !" << std::endl;
+    std::cout << "[MultiTaskDet]->[init] Failed to create runtime from model file: " << infer_params_.model_file
+              << std::endl;
     return -1;
   }
   //生成tensorrt引擎
@@ -50,21 +51,23 @@ int AVM_MultiTaskDet::init()
       runtime->deserializeCudaEngine(trtModelStream_.data(), model_size, nullptr));
   if (!engine)
   {
-    std::cout << "[avm_mlt_det]->[init] Failed to create engine !" << std::endl;
+    std::cout << "[MultiTaskDet]->[init] Failed to create engine from model file: " << infer_params_.model_file
+              << std::endl;
     return -1;
   }
   //创建上下文
   context_ = std::unique_ptr<nvinfer1::IExecutionContext, NvInferDeleter>(engine->createExecutionContext());
   if (!context_)
   {
-    std::cout << "[avm_mlt_det]->[init] Failed to create context !" << std::endl;
+    std::cout << "[MultiTaskDet]->[init] Failed to create context from model file: " << infer_params_.model_file
+              << std::endl;
     return -1;
   }
   // 解析输入输出维度
   const int nb_bindings = engine->getNbBindings();  //输入输出节点数
   if (nb_bindings != infer_params_.tensorNum)
   {
-    std::cout << "[avm_mlt_det]->[init] Tensor nb_bindings error !" << std::endl;
+    std::cout << "[MultiTaskDet]->[init] Tensor nb_bindings error !!!" << std::endl;
     return -1;
   }
   size_data_.clear();
@@ -76,7 +79,7 @@ int AVM_MultiTaskDet::init()
                 infer_params_.tensorNames.begin();  //获取name在入参中对应的位置
     if (name != infer_params_.tensorNames[index])   //确保name一致
     {
-      std::cout << "[avm_mlt_det]->[init] Tensor name error: " << infer_params_.tensorNames[index] << std::endl;
+      std::cout << "[MultiTaskDet]->[init] Tensor name error: " << infer_params_.tensorNames[index] << std::endl;
       return false;
     }
 
@@ -85,7 +88,7 @@ int AVM_MultiTaskDet::init()
         (dim.d[2] != infer_params_.tensorDim2[index]) ||
         (dim.d[3] != infer_params_.tensorDim3[index]))  //输入输出维度与config中保持一致
     {
-      std::cout << "[avm_mlt_det]->[init] Tensor shape error..." << std::endl;
+      std::cout << "[MultiTaskDet]->[init] Tensor shape error !!!" << std::endl;
       return false;
     }
 
@@ -144,7 +147,7 @@ int AVM_MultiTaskDet::init()
   infer_results_.da_result = cv::Mat(infer_params_.img_h, infer_params_.img_w, CV_8UC1);
   infer_results_.ll_result = cv::Mat(infer_params_.img_h, infer_params_.img_w, CV_8UC1);
 
-  std::cout << "[avm_mlt_det]->[init] Infer init success." << std::endl;
+  std::cout << "[MultiTaskDet]->[init] Infer init success." << std::endl;
 
   return 0;
 }
@@ -153,10 +156,10 @@ int AVM_MultiTaskDet::inference(const cv::Mat& input_img)
 {
   if (input_img.empty())
   {
-    std::cout << "[avm_mlt_det]->[inference] Input_img is empty!!!" << std::endl;
+    std::cout << "[MultiTaskDet]->[inference] Input_img is empty!!!" << std::endl;
     return -1;
   }
-  
+
   // 数据预处理
   // 从cpu拷贝数据到gpu
   // cv::Mat input_img = input.clone();
@@ -179,7 +182,7 @@ int AVM_MultiTaskDet::inference(const cv::Mat& input_img)
   context_->enqueue(infer_params_.batch_size, (void**)buffers_, stream_, nullptr);
   if (!context_)
   {
-    std::cout << "[avm_mlt_det]->[inference] Failed to enqueue !" << std::endl;
+    std::cout << "[MultiTaskDet]->[inference] Failed to enqueue !" << std::endl;
     return -1;
   }
 
@@ -209,7 +212,7 @@ int AVM_MultiTaskDet::load_config(std::string& config_path)
   YAML::Node infer_config = YAML::LoadFile(config_path);
   if (!infer_config)
   {
-    std::cout << "[avm_mlt_det]->[load_config] No config file: " << config_path << std::endl;
+    std::cout << "[MultiTaskDet]->[load_config] No config file: " << config_path << std::endl;
     return -1;
   }
   //导入配置参数

@@ -11,7 +11,7 @@ This codebase has been developed with cuda-11.1, TensorRT-8.4.1.5, OpenCV-3 and 
 ```
 cd MultiTaskDet
 bash build.sh
-```
+``` 
 
 ## 3 Test
 ### 3.1 Run test
