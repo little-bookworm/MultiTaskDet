@@ -2,7 +2,7 @@
  * @Author: zjj
  * @Date: 2023-12-04 10:55:58
  * @LastEditors: zjj
- * @LastEditTime: 2023-12-13 13:37:38
+ * @LastEditTime: 2023-12-13 15:13:12
  * @FilePath: /MultiTaskDet/include/inference.h
  * @Description:
  *
@@ -60,6 +60,7 @@ class AVM_MultiTaskDet
 {
 public:
   AVM_MultiTaskDet(std::string config_path);
+  ~AVM_MultiTaskDet();
   int init();
   int inference(const cv::Mat& input_img);
   InferResults* get_results();
@@ -68,22 +69,23 @@ private:
   int load_config();
   void preprocess(uint8_t* img_device, float* buffer, int batch, int width, int height, cudaStream_t stream);
   void decode();
+  void destory();
 
 private:
   std::string config_path_;
   Params infer_params_;  //推理输入参数
   // cuda and trt
-  cudaStream_t stream_;                                                   // stream
+  cudaStream_t stream_ = nullptr;                                         // stream
   std::unique_ptr<nvinfer1::IExecutionContext, NvInferDeleter> context_;  //网络上下文
   std::vector<std::string> binding_names_;                                //存储网络节点名称
   std::map<std::string, std::pair<int, size_t>> engine_name_size_;        //存储网络节点名及对应序号与size
   std::unique_ptr<GPUAllocator> gpu_mem_;                                 // gpu内存分配
   float* buffers_[32];                                                    // buffer内存地址
-  uint8_t* pdst_device_;                                                  //输入数据gpu地址（cuda预处理用）
-  float* host_input_;                                                     //输入数据cpu地址
-  float* host_det_out_;                                                   //检测头输出数据cpu地址
-  int* host_da_seg_;                                                      //可行驶区域分割输出数据cpu地址
-  int* host_ll_seg_;                                                      //地面标线分割输出数据cpu地址
+  uint8_t* pdst_device_ = nullptr;                                        //输入数据gpu地址（cuda预处理用）
+  float* host_input_ = nullptr;                                           //输入数据cpu地址
+  float* host_det_out_ = nullptr;                                         //检测头输出数据cpu地址
+  int* host_da_seg_ = nullptr;                                            //可行驶区域分割输出数据cpu地址
+  int* host_ll_seg_ = nullptr;                                            //地面标线分割输出数据cpu地址
   std::vector<size_t> size_data_;                                         //输入输出size
   InferResults infer_results_;                                            //检测结果
 };

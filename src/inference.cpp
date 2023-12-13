@@ -4,8 +4,13 @@ namespace ParkingPerception
 {
 namespace MultiTaskDet
 {
-AVM_MultiTaskDet::AVM_MultiTaskDet(std::string config_path):config_path_(config_path)
+AVM_MultiTaskDet::AVM_MultiTaskDet(std::string config_path) : config_path_(config_path)
 {
+}
+
+AVM_MultiTaskDet::~AVM_MultiTaskDet()
+{
+  destory();
 }
 
 int AVM_MultiTaskDet::init()
@@ -258,6 +263,45 @@ void AVM_MultiTaskDet::decode()
   get_seg_result(infer_results_.da_result, host_da_seg_);
   //获得车道线分割结果
   get_seg_result(infer_results_.ll_result, host_ll_seg_);
+}
+
+void AVM_MultiTaskDet::destory()
+{
+  if (stream_)
+  {
+    CHECK_CUDA(cudaStreamDestroy(stream_));
+    stream_ = nullptr;
+  }
+
+  if (pdst_device_)
+  {
+    CHECK_CUDA(cudaFree(pdst_device_));
+    pdst_device_ = nullptr;
+  }
+
+  if (host_input_)
+  {
+    CHECK_CUDA(cudaFreeHost(host_input_));
+    host_input_ = nullptr;
+  }
+
+  if (host_det_out_)
+  {
+    CHECK_CUDA(cudaFreeHost(host_det_out_));
+    host_det_out_ = nullptr;
+  }
+
+  if (host_da_seg_)
+  {
+    CHECK_CUDA(cudaFreeHost(host_da_seg_));
+    host_da_seg_ = nullptr;
+  }
+
+  if (host_ll_seg_)
+  {
+    CHECK_CUDA(cudaFreeHost(host_ll_seg_));
+    host_ll_seg_ = nullptr;
+  }
 }
 }  // namespace MultiTaskDet
 }  // namespace ParkingPerception
