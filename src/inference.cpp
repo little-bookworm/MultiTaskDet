@@ -209,12 +209,17 @@ InferResults* AVM_MultiTaskDet::get_results()
 int AVM_MultiTaskDet::load_config(std::string& config_path)
 {
   //导入yaml文件
-  YAML::Node infer_config = YAML::LoadFile(config_path);
-  if (!infer_config)
+  YAML::Node infer_config;
+  try
+  {
+    infer_config = YAML::LoadFile(config_path);
+  }
+  catch (const std::exception& e)
   {
     std::cout << "[MultiTaskDet]->[load_config] No config file: " << config_path << std::endl;
     return -1;
   }
+
   //导入配置参数
   auto img_params = infer_config["img_params"];
   infer_params_.batch_size = img_params["batch_size"].as<int>();
