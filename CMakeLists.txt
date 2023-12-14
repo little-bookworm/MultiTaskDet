@@ -7,8 +7,8 @@ add_compile_options(-std=c++14)
 set(MODULE_NAME "MultiTaskDet")
 
 set(CMAKE_BUILD_TYPE  Debug)
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -O0 -Wfatal-errors -pthread -w -g")
-set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11 -O0 -Xcompiler -fPIC -g -w ${CUDA_GEN_CODE}")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -O0 -Wfatal-errors -pthread -w -g")
+set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -O0 -Xcompiler -fPIC -g -w ${CUDA_GEN_CODE}")
 
 set(CUDA_TOOLKIT_ROOT_DIR     "/usr/local/cuda-11.1")
 set(CUDNN_DIR    "/usr/local/cuda")
